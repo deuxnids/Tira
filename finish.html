@@ -1,0 +1,14 @@
+<h1> Finish </h1>
+
+<div ng-controller="FinishCtrl as Finish">
+
+  <button ng-click="Finish.add()" class="btn btn-lg"> FINISH </button>
+
+  <p>{{ Finish.finish.time | date :'hh:mm:ss:.sss'}}</p>
+  asas
+
+  <p>Finishers attribués : {{ nbreOfFinishersAssigned}}</p>
+<p class="bg-danger">  Finishers non attribués :{{ nbreOfFinishersNotAssigned}} </p>
+
+
+</div>

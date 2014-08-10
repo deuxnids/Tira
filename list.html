@@ -1,0 +1,19 @@
+<input type="text" ng-model="search" class="search-query" placeholder="Search">
+<table>
+  <thead>
+  <tr>
+    <th>Project</th>
+    <th>Description</th>
+    <th><a href="#/new"><i class="glyphicon glyphicon-plus"></i></a></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="race in races | filter:search | orderBy:'name'">
+    <td><a ng-href="{{race.site}}" target="_blank">{{race.name}}</a></td>
+    <td>{{race.description}}</td>
+    <td>
+      <a ng-href="#/edit/{{race.$id}}"><i class="glyphicon glyphicon-pencil"></i></a>
+    </td>
+  </tr>
+  </tbody>
+</table>

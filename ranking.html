@@ -1,0 +1,26 @@
+<h1> Classement </h1>
+<div ng-controller="RankingCtrl as Ranking">
+
+		<div ng-repeat="cat in categories">
+		<h3> {{cat.km}} km, {{cat.name}} </h3>
+			<table class="table">
+			  <thead>
+			  <tr>
+			    <th>Nom Prénom</th> <th>km</th> <th>Annee de naissance</th> <th>Temps</th>
+			  </tr>
+			  </thead>
+			  <tbody> 
+			  <tr ng-repeat="runner in runners| categoryFilter:cat | orderBy:'time' ">
+			    <td>{{runner.lastName}}, {{runner.firstName}}</td>
+			    <td>{{runner.km}}</td>
+			    <td>{{runner.date | date}}</td>
+			    <td>  <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }}  </span>   </td>
+			  </tr>
+			  </tbody>
+			</table>
+
+
+
+	</div>
+	</div>
+</div>

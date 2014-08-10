@@ -1,0 +1,52 @@
+<div ng-controller="RunnerCtrl as Runner">
+
+<input type="text" ng-model="search" class="search-query" placeholder="Search">
+<button ng-click="Runner.addNew()" 
+        data-toggle="modal" 
+        data-target="#myModal">
+        <i class="glyphicon glyphicon-pencil">
+        </i>
+</button>
+
+
+{{nbreOfRunners}}
+
+<table class="table">
+
+  <thead>
+  <tr>
+    <th>Nom Prénom</th>
+    <th>km</th>
+    <th>Montant</th>
+    <th>dossard</th>
+    <th>Date de naissance</th>
+    <th>Temps</th>
+    <th></th>
+
+  </tr>
+  </thead>
+  <tbody> 
+  <tr ng-repeat="runner in runners | filter:search ">
+    <td>{{runner.lastName}}, {{runner.firstName}}</td>
+    <td>{{runner.km}}</td>
+    <td>{{runner.amount | currency:"CHF " }}</td>   
+    <td>{{runner.bib}}</td>
+    <td>{{runner.date | date }} </td>
+
+    <td>  <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }}  </span>   </td>
+    <td>
+      <button ng-click="Runner.showEdit(runner)" data-toggle="modal" data-target="#myModal"
+><i class="glyphicon glyphicon-pencil"></i></button>
+    </td>
+  </tr>
+
+
+  </tbody>
+</table>
+
+    <add-runner></add-runner> 
+
+
+  <div ng-show="Runner.show_edit">
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<h1> Timer </h1>
+
+
+<h3> Courses </h3>
+<div ng-controller="TimerCtrl as Timer">
+
+
+<form name="myForm">
+    <div class="control-group">
+      <label>KM</label>
+      <input type="text" name="km" ng-model="Timer.detailRace.km" required>
+
+      <label>Start Time</label>
+      <input type="datetime" name="start_time" ng-model="Timer.detailRace.start_time">
+     <button ng-click="Timer.add()" class="btn btn">Ajouter</button>
+    </div>
+</form>
+
+<div class="row">
+  <div ng-repeat="race in races">  
+    <div class="col-md-2 jumbotron"> 
+      <p>{{race.km}} km </p>
+      <div ng-if="race.start_time!=null" class="animate-if">
+        <p> started at {{race.start_time |  date :'hh:mm:ss:.sss'}} </p>
+        <button ng-click="Timer.stop(race)"> STOP </button>
+      </div>
+      <div ng-if="race.start_time==null" class="animate-if">
+        <button ng-click="Timer.start(race)"> START </button>
+      </div>
+              <button ng-click="Timer.remove(race)"> DELETE </button>
+
+    </div>
+    <div class="col-md-1 "></div>
+  </div>
+</div>
+
+
+
+  <h3> Finishers </h3>
+
+{{nbreOfFinishers}}
+
+  <div class="row">
+    <div ng-repeat="finisher in finishers | orderBy:'priority'"> 
+      <p> {{finisher.time | date :'hh:mm:ss:.sss'}}    </p>
+    </div>
+  </div>
+
+
+</div>
