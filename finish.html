@@ -11,4 +11,12 @@
 <p class="bg-danger">  Finishers non attribués :{{ nbreOfFinishersNotAssigned}} </p>
 
 
+<div ng-repeat="notAss in finishersNotAssigned"  |  orderBy:'date'>
+
+
+	heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}
+	<button class="btn btn-danger" ng-click="Finish.remove(notAss)"> DELETE</button>
+	<p></p>
+</div>
+
 </div>

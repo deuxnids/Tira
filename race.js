@@ -189,23 +189,26 @@ angular.module('race', ['ngRoute', 'firebase'])
 
 .controller('FinishCtrl', function($scope,Finishers) {
   $scope.finishers = Finishers;
+  $scope.finishersNotAssigned = [];
+  $scope.today = new Date();
   this.finish = {}
   this.finishersRef = new Firebase('run.firebaseio.com/finishers');
 
   $scope.$watch('finishers', function() {
-        // do something here
-        $scope.nbreOfFinishersAssigned = 0; 
-        $scope.nbreOfFinishersNotAssigned = 0; 
+     $scope.finishersNotAssigned = [];
+      $scope.nbreOfFinishersAssigned = 0; 
+      $scope.nbreOfFinishersNotAssigned = 0; 
 
-        $scope.finishers.forEach(function(fi){
-          if (fi.$priority>0){
-            $scope.nbreOfFinishersNotAssigned ++; 
-          }
-          else {
-            $scope.nbreOfFinishersAssigned ++; 
-          }
-        });
-    }, true);
+      $scope.finishers.forEach(function(fi){
+        if (fi.$priority>0){
+          $scope.finishersNotAssigned.push(fi);
+          $scope.nbreOfFinishersNotAssigned ++; 
+        }
+        else {
+          $scope.nbreOfFinishersAssigned ++; 
+        }
+      });
+  }, true);
 
 
   this.add = function(){
@@ -215,7 +218,12 @@ angular.module('race', ['ngRoute', 'firebase'])
       var newFinish = this.finishersRef.push();
       newFinish.set(this.finish);
       newFinish.setPriority(timestamp);
+  };
 
+
+  this.remove = function(notAssi){
+ 
+    $scope.finishers.$remove(notAssi);
 
   };
 })
@@ -225,12 +233,39 @@ angular.module('race', ['ngRoute', 'firebase'])
   $scope.runners     = Runners;
 
   $scope.categories = [
-                    {mindate:new Date(1811,1,1), maxdate:new Date(2911,1,1),name:"senior", km:20} ,
-                    {mindate:new Date(1811,1,1), maxdate:new Date(2911,1,1),name:"senior", km:10} 
-
+                    {mindate:new Date(1811,1,1), maxdate:new Date(1960,1,1),name:"senior", km:20} ,
+                    {mindate:new Date(1811,1,1), maxdate:new Date(1960,1,1),name:"senior", km:10} ,
+                    {mindate:new Date(1960,1,1), maxdate:new Date(1996,1,1),name:"adulte", km:20} ,
+                    {mindate:new Date(1960,1,1), maxdate:new Date(1996,1,1),name:"adulte", km:10} ,
+                    {mindate:new Date(1996,1,1), maxdate:new Date(2020,1,1),name:"jeune", km:20} ,
+                    {mindate:new Date(1996,1,1), maxdate:new Date(2020,1,1),name:"jeune", km:10} 
                 ];
 
 
+
+ //$scope.docDefinition = { content: 's' };
+
+ //pdfMake.createPdf($scope.docDefinition).download('optionalName.pdf');
+this.print = function(){
+  var doc = new jsPDF();
+console.log("sdsd");
+  doc.setFontSize(40);
+
+
+  var specialElementHandlers = {
+    '#editor': function(element, renderer){
+      return true;
+    }
+  };
+
+  // All units are in the set measurement for the document
+  // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+  doc.fromHTML($('#render_me').get(0), 15, 15, {
+    'width': 170, 
+    'elementHandlers': specialElementHandlers
+  });
+  doc.save('Test.pdf');
+}
 
 })
 
@@ -239,7 +274,7 @@ angular.module('race', ['ngRoute', 'firebase'])
     var filtered = [];
     for (var i = 0; i < items.length; i++) {
       var item = items[i];
-      if (item.km == cat.km && item.date > cat.mindate && item.date<cat.maxdate) {
+      if (item.km == cat.km && item.date >= cat.mindate && item.date<cat.maxdate) {
         filtered.push(item);
       }
     }
