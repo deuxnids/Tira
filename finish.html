@@ -5,13 +5,12 @@
   <button ng-click="Finish.add()" class="btn btn-lg"> FINISH </button>
 
   <p>{{ Finish.finish.time | date :'hh:mm:ss:.sss'}}</p>
-  asas
+  
 
-  <p>Finishers attribués : {{ nbreOfFinishersAssigned}}</p>
-<p class="bg-danger">  Finishers non attribués :{{ nbreOfFinishersNotAssigned}} </p>
+<h3> Temps pas assignes </h3>
 
 
-<div ng-repeat="notAss in finishersNotAssigned"  |  orderBy:'date'>
+<div ng-repeat="notAss in finishers | assignedFilter |  orderBy:'date' "  >
 
 
 	heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}

@@ -189,26 +189,9 @@ angular.module('race', ['ngRoute', 'firebase'])
 
 .controller('FinishCtrl', function($scope,Finishers) {
   $scope.finishers = Finishers;
-  $scope.finishersNotAssigned = [];
   $scope.today = new Date();
   this.finish = {}
   this.finishersRef = new Firebase('run.firebaseio.com/finishers');
-
-  $scope.$watch('finishers', function() {
-     $scope.finishersNotAssigned = [];
-      $scope.nbreOfFinishersAssigned = 0; 
-      $scope.nbreOfFinishersNotAssigned = 0; 
-
-      $scope.finishers.forEach(function(fi){
-        if (fi.$priority>0){
-          $scope.finishersNotAssigned.push(fi);
-          $scope.nbreOfFinishersNotAssigned ++; 
-        }
-        else {
-          $scope.nbreOfFinishersAssigned ++; 
-        }
-      });
-  }, true);
 
 
   this.add = function(){
@@ -267,6 +250,19 @@ console.log("sdsd");
   doc.save('Test.pdf');
 }
 
+})
+
+.filter('assignedFilter', function () {
+  return function (items) {
+    var filtered = [];
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (item.$priority>0 ) {
+        filtered.push(item);
+      }
+    }
+    return filtered;
+  };
 })
 
 .filter('categoryFilter', function () {
