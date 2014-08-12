@@ -11,6 +11,7 @@ angular.module('tira.controllers', [])
   this.add_new         = false;
   this.runnersRef      = new Firebase('run.firebaseio.com/runners');
 
+
   $scope.$watch('runners', function() 
   {
   	$scope.nbreOfRunners = $scope.runners.length;
@@ -138,6 +139,69 @@ angular.module('tira.controllers', [])
 			                    {mindate:new Date(1996,1,1), maxdate:new Date(2020,1,1),name:"jeune", km:20} ,
 			                    {mindate:new Date(1996,1,1), maxdate:new Date(2020,1,1),name:"jeune", km:10} 
                 				];
+
+  this.print = function()
+  {
+  	var docDefinition = { content: 'This is an sample PDF printed with pdfMake' };
+  	var dd = {
+	content: [
+
+				{ text: 'Marchethon 2014', style: 'header' },
+				{ text: [ 'Catégorie: KF2' ], color: 'black', italics: true },
+				{
+						style: 'tableExample',
+						table: {
+								headerRows: 1,
+								// keepWithHeaderRows: 1,
+								// dontBreakRows: true,
+								body: [
+										[{ text: 'Rang', style: 'tableHeader' }, 
+									    { text: 'Nom,Prénom', style: 'tableHeader' }, 
+									    { text: 'Temps', style: 'tableHeader' }],
+										[
+										{ text: '1.'}, 
+									    { text: 'Nom,Prénom ewew we  sdfds sdf sdf dsfs' }, 
+									    { text: 'Tempssss dfssds ' }
+										],
+										[
+										{ text: '1.'}, 
+									    { text: 'Nom,Prénom' }, 
+									    { text: 'Tempssss kjjkljlx sdf ' }
+										]	
+								]
+						}
+				},
+				
+	],
+	styles: {
+		header: {
+			fontSize: 18,
+			bold: true,
+			margin: [0, 0, 0, 10]
+		},
+		subheader: {
+			fontSize: 16,
+			bold: true,
+			margin: [0, 10, 0, 5]
+		},
+		tableExample: {
+			margin: [0, 5, 0, 15]
+		},
+		tableHeader: {
+			bold: true,
+			fontSize: 13,
+			color: 'black',
+			margin: [10, 10, 30, 10]
+
+		}
+	},
+	defaultStyle: {
+		// alignment: 'justify'
+	}
+	
+}
+ 		pdfMake.createPdf(dd).download('results.pdf');
+  }
 })
 
 .controller('ScanCtrl', function($scope,Finishers,Runners,Firebase,SyncFb) 

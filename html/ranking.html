@@ -1,8 +1,9 @@
 <div id="render_me">
 
-<h1> Classement </h1>
-<div ng-controller="RankingCtrl as Ranking">
+<h1> Classement </h1>   
 
+<div ng-controller="RankingCtrl as Ranking">
+<button ng-click="Ranking.print()"><i class="glyphicon glyphicon-download-alt"></i></button>
 		<div ng-repeat="cat in categories">
 		<h3> {{cat.km}} km, {{cat.name}} </h3>
 			<table class="table">
@@ -22,9 +23,11 @@
 			</table>
 
 	</div>
-	<button ng-click="Ranking.print()">ddd</button>
+
 	</div>
 	</div>
+
+
 
 
 </div>
