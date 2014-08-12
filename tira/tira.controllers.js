@@ -1,98 +1,4 @@
-
-var app = angular.module('app', ['race'])
-.config(function($routeProvider) {
-  $routeProvider
-    .when('/check_in', {
-      controller:'RunnerCtrl',
-      templateUrl:'html/check_in.html'
-    })
-    .when('/timer', {
-      controller:'TimerCtrl',
-      templateUrl:'html/timer.html'
-    })
-    .when('/finish', {
-      controller:'FinishCtrl',
-      templateUrl:'html/finish.html'
-    })
-    .when('/scan', {
-      controller:'ScanCtrl',
-      templateUrl:'html/scan.html'
-    })
-    .when('/ranking', {
-      controller:'RankingCtrl',
-      templateUrl:'html/ranking.html'
-    })
-    .when('/stats', {
-      controller:'StatsCtrl',
-      templateUrl:'html/stats.html'
-    })
-    .otherwise({
-      redirectTo:'/'
-    });
-});
-
-
-angular.module('race', ['ngRoute', 'firebase'])
-.value('fbURL_runners', 'https://run.firebaseio.com/runners')
-.value('fbURL_races', 'https://run.firebaseio.com/races')
-.value('fbURL_finishers', 'https://run.firebaseio.com/finishers')
-
-.factory('Runners', function($firebase, fbURL_runners) {
-  return $firebase(new Firebase(fbURL_runners)).$asArray() ;
-})
-.factory('Races', function($firebase, fbURL_races) {
-  return $firebase(new Firebase(fbURL_races)).$asArray();
-})
-.factory('Finishers', function($firebase, fbURL_finishers) {
-  return $firebase(new Firebase(fbURL_finishers)).$asArray();
-})
-
-
- 
-
-.filter('race_time', function() {
-
-  findRace = function(input) {
-    var time    = false;
-    var _start  = false;
-    var ref = new Firebase("https://run.firebaseio.com/races"); 
-    ref.once('value', function(snap) {
-      snap.forEach(function(raceSnap) {
-        if (Number(input.km) == Number(raceSnap.val().km)) {
-              _start  = new Date(raceSnap.val().start_time );
-              _final = new Date(input.time);
-              var diff =  _final.getTime()- _start.getTime();
-              var msec = diff;
-              var hh = Math.floor(msec / 1000 / 60 / 60);
-              msec -= hh * 1000 * 60 * 60;
-              var mm = Math.floor(msec / 1000 / 60);
-              msec -= mm * 1000 * 60;
-              var ss = Math.floor(msec / 1000);
-              msec -= ss * 1000;
-              time = hh.toString()+":"+mm.toString()+":"+ss.toString()+":"+msec.toString();
-        }
-      })
-    });
-    return time;
-  };
-  return function(input) {
-    return  findRace(input);    
-  };
-})
-
-
-.directive('addRunner', function(){
- return { 
-  restrict:'E',
-  templateUrl:'html/detail_runner.html'
- };
-})
-.directive('listRunners', function(){
- return { 
-  restrict:'E',
-  templateUrl:'html/list_runners.html'
- };
-})
+angular.module('tira.controllers', [])
 
 .controller('RunnerCtrl', function($scope, Runners,Firebase,Races) {
   $scope.runners = Runners;
@@ -156,12 +62,13 @@ angular.module('race', ['ngRoute', 'firebase'])
       $scope.runners.$remove(this.detailRunner);
       this.detailRunner = {};
       this.show_edit = false;
-            this.add_new = false; 
+      this.add_new = false; 
 
 
     };
 
 })
+
 
 .controller('TimerCtrl', function($scope, Races,Finishers) {
   $scope.races     = Races;
@@ -261,34 +168,6 @@ console.log("sdsd");
 
 })
 
-.filter('assignedFilter', function () {
-  return function (items) {
-    var filtered = [];
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      if (item.$priority>0 ) {
-        filtered.push(item);
-      }
-    }
-    return filtered;
-  };
-})
-
-.filter('categoryFilter', function () {
-  return function (items, cat) {
-    var filtered = [];
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      if (item.km == cat.km && item.date >= cat.mindate && item.date<cat.maxdate) {
-        filtered.push(item);
-      }
-    }
-    return filtered;
-
-    //
-  };
-})
-
 .controller('ScanCtrl', function($scope,Finishers,Runners,Firebase) {
 
   $scope.time = false; 
@@ -329,6 +208,4 @@ console.log("sdsd");
 $scope.bib = "";
   };
 })
-
-
 ;

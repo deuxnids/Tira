@@ -1,30 +1,32 @@
 <!doctype html>
-<html ng-app="app">
+<html ng-app="tira">
   <head>
-      <meta charset='utf-8'>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular-resource.min.js">
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular-route.min.js">
-   </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular-route.min.js"></script>
     <script src="https://cdn.firebase.com/v0/firebase.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.js"></script>
-      <script src='js/jspdf.min.js'></script>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src='js/jspdf.min.js'></script>
 
     <script src="https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js"></script>
     <link rel="stylesheet" href="css/bootstrap.css">
-    <script src="race.js"></script>
 
+    <script src="tira/tira.controllers.js"></script>
+    <script src="tira/tira.directives.js"></script>
+    <script src="tira/tira.factories.js"></script>
+    <script src="tira/tira.filters.js"></script>
+    <script src="tira/tira.js"></script>
   </head>
-  <body>
-  <div class="container">
-    <h2>Marchethon 2014</h2>
-    <div ng-view></div>
-  </body>
-</div>
 
+  <body>
+    <div class="container">
+      <h2>Marchethon 2014</h2>
+      <div ng-view></div>
+    </div>
+  </body>
+  
 </html>
