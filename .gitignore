@@ -1,0 +1,12 @@
+fonts/Roboto-Italic.ttf
+fonts/Roboto-Light.ttf
+fonts/Roboto-Medium.ttf
+fonts/Roboto-Regular.ttf
+js/fonts/
+js/jspdf.amd.min.js
+js/jspdf.min.js
+js/jspdf.source.js
+js/pdfmake.js
+js/pdfmake.min.js
+js/pdfmake.min.map
+js/vfs_fonts.js

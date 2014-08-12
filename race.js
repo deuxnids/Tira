@@ -4,27 +4,27 @@ var app = angular.module('app', ['race'])
   $routeProvider
     .when('/check_in', {
       controller:'RunnerCtrl',
-      templateUrl:'check_in.html'
+      templateUrl:'html/check_in.html'
     })
     .when('/timer', {
       controller:'TimerCtrl',
-      templateUrl:'timer.html'
+      templateUrl:'html/timer.html'
     })
     .when('/finish', {
       controller:'FinishCtrl',
-      templateUrl:'finish.html'
+      templateUrl:'html/finish.html'
     })
     .when('/scan', {
       controller:'ScanCtrl',
-      templateUrl:'scan.html'
+      templateUrl:'html/scan.html'
     })
     .when('/ranking', {
       controller:'RankingCtrl',
-      templateUrl:'ranking.html'
+      templateUrl:'html/ranking.html'
     })
     .when('/stats', {
       controller:'StatsCtrl',
-      templateUrl:'stats.html'
+      templateUrl:'html/stats.html'
     })
     .otherwise({
       redirectTo:'/'
@@ -84,13 +84,13 @@ angular.module('race', ['ngRoute', 'firebase'])
 .directive('addRunner', function(){
  return { 
   restrict:'E',
-  templateUrl:'detail_runner.html'
+  templateUrl:'html/detail_runner.html'
  };
 })
 .directive('listRunners', function(){
  return { 
   restrict:'E',
-  templateUrl:'list_runners.html'
+  templateUrl:'html/list_runners.html'
  };
 })
 
