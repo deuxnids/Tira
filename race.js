@@ -22,6 +22,10 @@ var app = angular.module('app', ['race'])
       controller:'RankingCtrl',
       templateUrl:'ranking.html'
     })
+    .when('/stats', {
+      controller:'StatsCtrl',
+      templateUrl:'stats.html'
+    })
     .otherwise({
       redirectTo:'/'
     });
@@ -209,6 +213,11 @@ angular.module('race', ['ngRoute', 'firebase'])
     $scope.finishers.$remove(notAssi);
 
   };
+})
+
+.controller('StatsCtrl', function($scope) {
+
+
 })
 
 .controller('RankingCtrl', function($scope, Runners,Firebase,Races) {
