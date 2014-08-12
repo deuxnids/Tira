@@ -1,14 +1,15 @@
 angular.module('tira.controllers', [])
 
-.controller('RunnerCtrl', function($scope, Runners, Firebase, Races) 
+.controller('RunnerCtrl', function($scope, Runners, Firebase, Races,SyncFb) 
 {
   $scope.runners       = Runners;
+  $scope.today         = new Date() ;
+  $scope.nbreOfRunners = 0 ;   
+
   this.detailRunner    = false;
   this.show_edit       = false;
   this.add_new         = false;
-  $scope.today         = new Date() ;
   this.runnersRef      = new Firebase('run.firebaseio.com/runners');
-  $scope.nbreOfRunners = 0 ;   
 
   $scope.$watch('runners', function() 
   {
@@ -21,21 +22,21 @@ angular.module('tira.controllers', [])
     if(this.add_new)
     {
       var newRunner = this.runnersRef.push();
-      newRunner.set(this.detailRunner);
+      newRunner.set(this.detailRunner, SyncFb.alert);
       newRunner.setPriority(Number(this.detailRunner.bib));
     }
     else
     {
       var ref = this.runnersRef.child(this.detailRunner.$id);
-      //ref.set(this.detailRunner);
-      $scope.runners.$save(this.detailRunner);
-      ref.setPriority(Number(this.detailRunner.bib));
+      $scope.runners.$save(this.detailRunner).then(SyncFb.alert);
+      ref.setPriority(Number(this.detailRunner.bib) );
     }
 
     this.detailRunner = {};
     this.show_edit    = false;
     this.add_new      = false;
   };
+
   this.showEdit = function(runner) 
   {
     this.detailRunner 		 = runner;
@@ -58,17 +59,20 @@ angular.module('tira.controllers', [])
 
   this.destroy = function() 
   {
-      $scope.runners.$remove(this.detailRunner);
-      this.detailRunner = {};
-      this.show_edit    = false;
-      this.add_new      = false; 
+		var ref = this.runnersRef.child(this.detailRunner.$id);
+		ref.remove(SyncFb.alert);
+    this.detailRunner = {};
+    this.show_edit    = false;
+    this.add_new      = false; 
   };
+
 })
 
-.controller('TimerCtrl', function($scope, Races,Finishers) 
+.controller('TimerCtrl', function($scope, Races,Finishers,SyncFb) 
 {
   $scope.races     = Races;
   $scope.finishers = Finishers;
+
   $scope.$watch('runners', function() 
   {
   	$scope.nbreOfFinishers=$scope.finishers.length;
@@ -76,26 +80,26 @@ angular.module('tira.controllers', [])
 
   this.add = function()
   {
-  	Races.$add(this.detailRace);
+  	Races.$add(this.detailRace).then(SyncFb.alert);
   };
 
   this.start = function(race) 
   {
 	  race.start_time = new Date( ).getTime();
-	  $scope.races.$save(race);
+	  $scope.races.$save(race).then(SyncFb.alert);
   };
   this.stop = function(race) 
   {
 	  race.start_time = null;
-	  $scope.races.$save(race);
+	  $scope.races.$save(race).then(SyncFb.alert);
   };
   this.remove = function(race) 
   {
-		$scope.races.$remove(race);
+		$scope.races.$remove(race).then(SyncFb.alert);
   };
 })
 
-.controller('FinishCtrl', function($scope,Finishers) 
+.controller('FinishCtrl', function($scope,Finishers,SyncFb) 
 {
   $scope.finishers 	= Finishers;
   $scope.today 			= new Date();
@@ -107,13 +111,13 @@ angular.module('tira.controllers', [])
 	  var timestamp = new Date().getTime(); 
 	  this.finish 	= {time:timestamp, runner:false};
 	  var newFinish = this.finishersRef.push();
-	  newFinish.set(this.finish);
+	  newFinish.set(this.finish,SyncFb.alert);
 	  newFinish.setPriority(timestamp);
   };
 
   this.remove = function(notAssi)
   {
-    $scope.finishers.$remove(notAssi);
+    $scope.finishers.$remove(notAssi).then(SyncFb.alert);
   };
 })
 
@@ -136,7 +140,7 @@ angular.module('tira.controllers', [])
                 				];
 })
 
-.controller('ScanCtrl', function($scope,Finishers,Runners,Firebase) 
+.controller('ScanCtrl', function($scope,Finishers,Runners,Firebase,SyncFb) 
 {
   $scope.time = false; 
 
@@ -149,7 +153,7 @@ angular.module('tira.controllers', [])
 	    snap.forEach(function(finisherSnap) 
 	    {
 	      console.log("finishers");
-	      finisherSnap.ref().setPriority( -1 );
+	      finisherSnap.ref().setPriority( -1 ).then(SyncFb.alert);
 	      $scope.time=finisherSnap.val().time; 
 	      console.log($scope.bib);
 	      new Firebase("https://run.firebaseio.com/runners").startAt(Number($scope.bib) ).endAt(Number($scope.bib) ).once('value', function(snap2) 
@@ -170,7 +174,7 @@ angular.module('tira.controllers', [])
 	          else 
 	          {
               obj.time = $scope.time;
-              runnerSnap.ref().update(obj);
+              runnerSnap.ref().update(obj,SyncFb.alert);
              // runnerSnap.ref().setPriority(Number($scope.bib));
 	          }
 	          

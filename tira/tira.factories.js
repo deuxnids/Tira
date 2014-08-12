@@ -8,4 +8,22 @@ angular.module('tira.factories', [])
 })
 .factory('Finishers', function($firebase, fbURL_finishers) {
   return $firebase(new Firebase(fbURL_finishers)).$asArray();
-});
+})
+
+.service('SyncFb', function() 
+{
+	this.alert = function(error)
+	{
+	  if (error || error == null) 
+	  {
+	    alertify.log("Sync FB ok",1000);
+	  } 
+	  else 
+	  {
+			alertify.error("Error syncing FB "+error,1000);
+	  }
+	}
+})
+
+;
+
