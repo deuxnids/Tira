@@ -7,7 +7,6 @@ angular.module('tira.filters', [])
     var time    = false;
     var _start  = false;
     var ref     = new Firebase("https://run.firebaseio.com/races"); 
-
     ref.once('value', function(snap) 
     {
       snap.forEach(function(raceSnap) 

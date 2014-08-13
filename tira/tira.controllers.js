@@ -29,7 +29,10 @@ angular.module('tira.controllers', [])
     else
     {
       var ref = this.runnersRef.child(this.detailRunner.$id);
-      $scope.runners.$save(this.detailRunner).then(SyncFb.alert);
+
+      $scope.runners.$save(this.detailRunner);
+
+
       ref.setPriority(Number(this.detailRunner.bib) );
     }
 
@@ -127,7 +130,7 @@ angular.module('tira.controllers', [])
 
 })
 
-.controller('RankingCtrl', function($scope, Runners,Firebase,Races) 
+.controller('RankingCtrl', function($scope, Runners,Firebase,Races,$filter) 
 {
   $scope.races       = Races;
   $scope.runners     = Runners;
@@ -142,37 +145,53 @@ angular.module('tira.controllers', [])
 
   this.print = function()
   {
-  	var docDefinition = { content: 'This is an sample PDF printed with pdfMake' };
-  	var dd = {
-	content: [
 
-				{ text: 'Marchethon 2014', style: 'header' },
-				{ text: [ 'Catégorie: KF2' ], color: 'black', italics: true },
-				{
-						style: 'tableExample',
-						table: {
-								headerRows: 1,
-								// keepWithHeaderRows: 1,
-								// dontBreakRows: true,
-								body: [
-										[{ text: 'Rang', style: 'tableHeader' }, 
-									    { text: 'Nom,Prénom', style: 'tableHeader' }, 
-									    { text: 'Temps', style: 'tableHeader' }],
-										[
-										{ text: '1.'}, 
-									    { text: 'Nom,Prénom ewew we  sdfds sdf sdf dsfs' }, 
-									    { text: 'Tempssss dfssds ' }
-										],
-										[
-										{ text: '1.'}, 
-									    { text: 'Nom,Prénom' }, 
-									    { text: 'Tempssss kjjkljlx sdf ' }
-										]	
-								]
-						}
-				},
-				
-	],
+
+
+
+
+    var content = [
+        { text: 'Marchethon 2014', style: 'header' },
+       // { text: [ 'Catégorie: KF2' ], color: 'black', italics: true },
+       // { style: 'tableExample',table: { headerRows: 1,body: res_body} },      
+        ]
+
+    $scope.categories.forEach(function(cat) {
+        content.push({ text: [ 'Catégorie: '+cat.km+" km "+cat.name ], color: 'black', italics: true } );
+        var res_body = [
+                [{ text: 'Rang', style: 'tableHeader' }, 
+                  { text: 'Nom,Prénom', style: 'tableHeader' }, 
+                  { text: 'Temps', style: 'tableHeader' }]    
+            ];
+        var res = $filter('categoryFilter')($scope.runners, cat);
+        res = $filter('orderBy')(res, 'time') ;
+        var rank = 0;
+        res.forEach(function(runner)
+        {
+          rank = rank + 1; 
+          var time ;
+          if (runner.time == undefined)
+          {
+              time = "DNS";
+          }
+          else
+          {
+            time = $filter('race_time')(runner, cat.km);
+          }
+
+        var runner_res = [{ text: rank.toString()       }, 
+                          { text: runner.lastName}, 
+                          { text: time   }];
+        res_body.push(runner_res);
+        });
+      content.push( { style: 'tableExample',table: { headerRows: 1,body: res_body} });
+
+    });
+
+  	var docDefinition = { content: 'This is an sample PDF printed with pdfMake' };
+
+  	var dd = {
+	content: content,
 	styles: {
 		header: {
 			fontSize: 18,
@@ -211,35 +230,38 @@ angular.module('tira.controllers', [])
   this.scan = function()
   {
 	  $scope.runner = false; 
-	  console.log("scanning");
+	  //console.log("scanning");
 	  new Firebase("https://run.firebaseio.com/finishers").startAt(0).limit(1).once('value', function(snap) 
 	  {
 	    snap.forEach(function(finisherSnap) 
 	    {
 	      console.log("finishers");
-	      finisherSnap.ref().setPriority( -1 ).then(SyncFb.alert);
 	      $scope.time=finisherSnap.val().time; 
-	      console.log($scope.bib);
+	      //console.log($scope.bib);
 	      new Firebase("https://run.firebaseio.com/runners").startAt(Number($scope.bib) ).endAt(Number($scope.bib) ).once('value', function(snap2) 
 	      {
 	        console.log(snap2);
 					snap2.forEach(function(runnerSnap) 
 					{
-						console.log("runner");
-						console.log('runner matching bib', runnerSnap.val() );
-						console.log('runner matching bib', $scope.bib   );
-						console.log('runner matching bib', $scope.time );
+						//console.log("runner");
+						//console.log('runner matching bib', runnerSnap.val() );
+						//console.log('runner matching bib', $scope.bib   );
 						var obj = runnerSnap.val();
+            console.log('runner matching bib time', obj.time );
+
 	          $scope.runner = runnerSnap.val();
-	          if (obj.time)
-	          {
-            	$scope.runner.comment = " a deja un temps attribue";
-	          }
-	          else 
+	          if (obj.time == ""  || obj.time == undefined  )
 	          {
               obj.time = $scope.time;
               runnerSnap.ref().update(obj,SyncFb.alert);
-             // runnerSnap.ref().setPriority(Number($scope.bib));
+              finisherSnap.ref().setPriority( -1,SyncFb.alert );
+              console.log("AAAA");
+              //runnerSnap.ref().setPriority(Number($scope.bib));
+	          }
+	          else 
+	          {
+              //$scope.runner.comment = " a deja un temps attribue";
+              SyncFb.alert(" a deja un temps attribue");
 	          }
 	          
           });

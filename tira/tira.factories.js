@@ -14,13 +14,13 @@ angular.module('tira.factories', [])
 {
 	this.alert = function(error)
 	{
-	  if (error || error == null) 
+	  if (error==false || error == null) 
 	  {
-	    alertify.log("Sync FB ok",1000);
+	    alertify.log("Sync FB ok",10000);
 	  } 
 	  else 
 	  {
-			alertify.error("Error syncing FB "+error,1000);
+			alertify.error("Error syncing FB "+error,10000);
 	  }
 	}
 })

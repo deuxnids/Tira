@@ -8,27 +8,27 @@ var app = angular.module('tira', ['ngRoute',
 .config(function($routeProvider) {
   $routeProvider
     .when('/check_in', {
-      controller:'RunnerCtrl',
+      //controller:'RunnerCtrl',
       templateUrl:'html/check_in.html'
     })
     .when('/timer', {
-      controller:'TimerCtrl',
+     // controller:'TimerCtrl',
       templateUrl:'html/timer.html'
     })
     .when('/finish', {
-      controller:'FinishCtrl',
+     // controller:'FinishCtrl',
       templateUrl:'html/finish.html'
     })
     .when('/scan', {
-      controller:'ScanCtrl',
+     // controller:'ScanCtrl',
       templateUrl:'html/scan.html'
     })
     .when('/ranking', {
-      controller:'RankingCtrl',
+    //  controller:'RankingCtrl',
       templateUrl:'html/ranking.html'
     })
     .when('/stats', {
-      controller:'StatsCtrl',
+     // controller:'StatsCtrl',
       templateUrl:'html/stats.html'
     })
     .otherwise({
