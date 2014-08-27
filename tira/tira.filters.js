@@ -15,6 +15,7 @@ angular.module('tira.filters', [])
         {
           var _start  = new Date(raceSnap.val().start_time );
           var _final  = new Date(input.time);
+          console.log(_final);
           var diff    = _final.getTime()- _start.getTime();
           var msec    = diff;
           var hh      = Math.floor(msec / 1000 / 60 / 60);

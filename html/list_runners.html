@@ -1,52 +1,41 @@
 <div ng-controller="RunnerCtrl as Runner">
+  <div class="scrollable">
+    <div class="scrollable-content">
+      <div class="container-fluid section section-break" id="toggleExample">
+        <button ng-click="Runner.addNew()">
+          <i class="glyphicon glyphicon-plus"></i>
+        </button>
+        {{nbreOfRunners}}
 
-<input type="text" ng-model="search" class="search-query" placeholder="Search">
-<button ng-click="Runner.addNew()" 
-        data-toggle="modal" 
-        data-target="#myModal">
-        <i class="glyphicon glyphicon-pencil">
-        </i>
-</button>
-
-
-{{nbreOfRunners}}
-
-<table class="table">
-
-  <thead>
-  <tr>
-    <th>Nom Prénom</th>
-    <th>km</th>
-    <th>Montant</th>
-    <th>dossard</th>
-    <th>Date de naissance</th>
-    <th>Temps</th>
-    <th></th>
-
-  </tr>
-  </thead>
-  <tbody> 
-  <tr ng-repeat="runner in runners | filter:search ">
-    <td>{{runner.lastName}}, {{runner.firstName}}</td>
-    <td>{{runner.km}}</td>
-    <td>{{runner.amount | currency:"CHF " }}</td>   
-    <td>{{runner.bib}}</td>
-    <td>{{runner.date | date }} </td>
-
-    <td>  <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }}  </span>   </td>
-    <td>
-      <button ng-click="Runner.showEdit(runner)" data-toggle="modal" data-target="#myModal"
-><i class="glyphicon glyphicon-pencil"></i></button>
-    </td>
-  </tr>
-
-
-  </tbody>
-</table>
-
-    <add-runner></add-runner> 
-
-
-  <div ng-show="Runner.show_edit">
+        <table st-table="runners" class="table table-striped">
+          <thead>
+            <tr>
+              <th st-sort="lastName">Nom</th>
+              <th st-sort="km">km</th>
+              <th>Montant</th>
+              <th>dossard</th>
+              <th>Date de naissance</th>
+              <th>Temps</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="runner in runners">
+              <td>{{runner.lastName}}</td>
+              <td>{{runner.km}}</td>
+              <td>{{runner.amount | currency:"CHF " }}</td>   
+              <td>{{runner.bib}}</td>
+              <td>{{runner.date | date }} </td>
+              <td> <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }} </span> </td>
+              <td> <button ng-click="Runner.showEdit(runner)">
+                    <i class="glyphicon glyphicon-pencil"></i></button> </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
   </div>
+<add-runner></add-runner> 
 </div>
+
+
+

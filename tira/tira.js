@@ -4,7 +4,11 @@ var app = angular.module('tira', ['ngRoute',
                                   'tira.filters'    ,
                                   'tira.controllers',
                                   'tira.directives' , 
-                                  'tira.factories'   ])
+                                  'tira.factories'  ,
+                                  'smart-table',
+                                  'mobile-angular-ui'  ])
+
+
 .config(function($routeProvider) {
   $routeProvider
     .when('/check_in', {
@@ -32,7 +36,7 @@ var app = angular.module('tira', ['ngRoute',
       templateUrl:'html/stats.html'
     })
     .otherwise({
-      redirectTo:'/'
+      templateUrl:'html/home.html'
     });
 })
 .value('fbURL_runners', 'https://run.firebaseio.com/runners')

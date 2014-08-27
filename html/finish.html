@@ -1,21 +1,44 @@
-<h1> Finish </h1>
+
 
 <div ng-controller="FinishCtrl as Finish">
 
-  <button ng-click="Finish.add()" class="btn btn-lg"> FINISH </button>
 
-  <p>{{ Finish.finish.time | date :'hh:mm:ss:.sss'}}</p>
-  
+<div class="scrollable">
+  <div class="scrollable-content">
+  <div class="container-fluid section section-break">
+		  <button ng-click="Finish.add()" class="btn btn-lg"> FINISH </button>
+	
+	</div>
 
-<h3> Temps pas assignes </h3>
+    <div class="list-group">
 
+			</div>
+			<div ng-repeat="notAss in finishers | assignedFilter |  orderBy:'date' "  href="#" class="list-group-item">
+        				heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}
+				<button class="btn btn-danger pull-right"  ng-click="Finish.remove(notAss)"> DELETE</button> 
+				<br>
+      </div>
 
-<div ng-repeat="notAss in finishers | assignedFilter |  orderBy:'date' "  >
-
-
-	heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}
-	<button class="btn btn-danger" ng-click="Finish.remove(notAss)"> DELETE</button>
-	<p></p>
+    </div>
+  </div>
+</div>
 </div>
 
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

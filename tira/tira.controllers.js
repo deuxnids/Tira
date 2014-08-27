@@ -1,11 +1,10 @@
-angular.module('tira.controllers', [])
+angular.module('tira.controllers', ['smart-table'])
 
-.controller('RunnerCtrl', function($scope, Runners, Firebase, Races,SyncFb) 
+.controller('RunnerCtrl', function($scope, Runners, Firebase, Races,SyncFb,$filter,$rootScope) 
 {
   $scope.runners       = Runners;
   $scope.today         = new Date() ;
   $scope.nbreOfRunners = 0 ;   
-
   this.detailRunner    = false;
   this.show_edit       = false;
   this.add_new         = false;
@@ -19,7 +18,7 @@ angular.module('tira.controllers', [])
 
   this.save = function() 
   {
-    this.detailRunner.date = new Date( this.detailRunner.date  ).getTime();
+    //this.detailRunner.date = new Date( this.detailRunner.date  ).getTime();
     if(this.add_new)
     {
       var newRunner = this.runnersRef.push();
@@ -44,8 +43,10 @@ angular.module('tira.controllers', [])
   this.showEdit = function(runner) 
   {
     this.detailRunner 		 = runner;
-    this.detailRunner.date = new Date(runner.date);
+   // console.log(runner.date);
+   // this.detailRunner.date = new Date( runner.date  );
     this.show_edit 				 = true;
+    $rootScope.toggle('overlay1', 'on');
   };
 
   this.addNew = function() 
@@ -112,11 +113,11 @@ angular.module('tira.controllers', [])
 
   this.add = function()
   {
-	  var timestamp = new Date().getTime(); 
-	  this.finish 	= {time:timestamp, runner:false};
+	  var timestamp = new Date(); 
+	  this.finish 	= {time:timestamp.toISOString(), runner:false};
 	  var newFinish = this.finishersRef.push();
 	  newFinish.set(this.finish,SyncFb.alert);
-	  newFinish.setPriority(timestamp);
+	  newFinish.setPriority(timestamp.getTime());
   };
 
   this.remove = function(notAssi)
