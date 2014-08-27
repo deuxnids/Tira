@@ -60,7 +60,9 @@ angular.module('tira.filters', [])
     for (var i = 0; i < items.length; i++) 
     {
       var item = items[i];
-      if (item.km == cat.km && item.date >= cat.mindate && item.date<cat.maxdate) 
+      date = new Date(item.date);
+      console.log(date);
+      if (item.km == cat.km && date >= cat.mindate && date<cat.maxdate) 
       {
         filtered.push(item);
       }
