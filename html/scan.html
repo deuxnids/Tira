@@ -1,36 +1,25 @@
-<div class="scrollable">
-  <div class="scrollable-content">
-  <div class="container-fluid section section-break">
-
-
-<h1> Scan </h1>
-
 <div ng-controller="ScanCtrl as Scan">
-
-<form name="myForm">
-    <div class="control-group">
-      <label>Dossard</label>
-      <input type="number" name="bib" ng-model="bib" required>
-
-     <button ng-click="Scan.scan()" class="btn btn">Ajouter</button>
-    </div>
-
-    <div ng-show="runner">
-    	<h2 class="bg-success" >
-    	{{runner.bib}}, {{runner.firstName}}, {{runner.lastName}}  
-    </h2>
-    <div ng-if="runner.comment"> 
-    <h2 class="bg-danger" >
-   	 {{runner.comment}} 
-    </h2>
-    </div>
-
-
+   <div content-for="title">
+    <span>Scan</span>
   </div>
-</form>
+  <div class="scrollable">
+    <div class="scrollable-content">
+      <div ng-show="showDetail" class="container-fluid section section-break">
+        <detail-finisher></detail-finisher> 
+      </div>
 
+      <div ng-show="showList">
+      <div class="list-group">  
+        <a  ng-repeat="notAss in finishers | assignedFilter |  orderBy:'date' " 
+            href="" 
+            ng-click="Scan.edit(notAss)" 
+            class="list-group-item">
+         <strong>{{$index + 1}}</strong> 
+         heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}} <i class="fa fa-chevron-right pull-right"></i>
+        </a>
+      </div>
+      </div>
 
-</div>
-</div>
-</div>
+    </div>
+  </div>
 </div>
