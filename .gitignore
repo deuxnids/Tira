@@ -10,3 +10,5 @@ js/pdfmake.js
 js/pdfmake.min.js
 js/pdfmake.min.map
 js/vfs_fonts.js
+bower_components/*
+intervals/*
