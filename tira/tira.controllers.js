@@ -1,51 +1,120 @@
 angular.module('tira.controllers', ['smart-table'])
 
-.controller('RunnerCtrl', function($scope, Runners, Firebase, Races,SyncFb,$filter,$rootScope) 
+
+.controller('UserCtrl', function($scope, Firebase,AuthService) 
+{
+  $scope.AuthService = AuthService;
+})
+
+.controller('RunnerCtrl', function($scope, Runners, Firebase, Races,SyncFb,$filter,$rootScope,cats,AuthService,BibValidation) 
 {
   $scope.runners       = Runners;
   $scope.today         = new Date() ;
   $scope.nbreOfRunners = 0 ;   
+  $scope.totalAmount = 0 ;   
+  this.show_doubloons = false;
+  $scope.categories    = cats;
   this.detailRunner    = false;
   this.show_edit       = false;
+  this.show_import     = false;
+  $scope.json_import_file = {};
+
   this.add_new         = false;
   this.runnersRef      = new Firebase('run.firebaseio.com/runners');
-
+  $scope.AuthService   = AuthService;
 
   $scope.$watch('runners', function() 
   {
   	$scope.nbreOfRunners = $scope.runners.length;
+    $scope.totalAmount = 0; 
+    $scope.runners.forEach(function(runner){
+        $scope.totalAmount += runner.amount;
+    });
+
   }, true);
+
+  $scope.addRunners = function($fileContent, runCtrl){
+    $scope.content = angular.fromJson( $fileContent);
+    $scope.content.forEach(function(runner)
+    {
+
+      for (var name in runner) {
+          if (runner.hasOwnProperty(name) && name[0]=="$") {
+            delete runner[name];
+          }
+      }
+
+      runCtrl.detailRunner = runner;
+      runCtrl.add_new=true;
+      runCtrl.save();
+    });
+  };
+
+this.deleteAll = function(){
+var ctrl = this;
+if (confirm("You are going to delete ALL runners! Sure?") == true) {
+    $scope.runners.forEach(function(runner){
+        ctrl.detailRunner=runner;
+        console.log(ctrl.detailRunner);
+
+        ctrl.destroy();
+    });
+    } else {
+    }
+};
+
+  this.importJson = function(){
+ $rootScope.toggle('overlay_import', 'on');
+
+  };
+
+  this.exportJson = function(){
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.runners));
+    var date = new Date();
+    var name = "runners_"+date.toString();
+
+    $('<a href="data:' + data + '" download="'+name+'.json">download JSON</a>').appendTo('#dowloadJson');
+    // window.location.href="data:" + data + " download=runners.json" ;
+    // window.location.download="runners.json" ;
+
+  };
+
+
+
+  this.print = function(file){
+    console.log(file);
+  };
 
   this.save = function() 
   {
-    //this.detailRunner.date = new Date( this.detailRunner.date  ).getTime();
-    if(this.add_new)
+    var error = {};
+    //bib_exists = $filter('bibFilter')(this.detailRunner.bib);
+
+    var validBib =  BibValidation.validateBib( $scope.runners , this.detailRunner.$id, this.detailRunner.bib);
+    if (validBib){
+    if(this.add_new )
     {
       var newRunner = this.runnersRef.push();
-      newRunner.set(this.detailRunner, SyncFb.alert);
+      newRunner.set(this.detailRunner);
       newRunner.setPriority(Number(this.detailRunner.bib));
     }
-    else
+    else    
     {
       var ref = this.runnersRef.child(this.detailRunner.$id);
-
       $scope.runners.$save(this.detailRunner);
-
-
       ref.setPriority(Number(this.detailRunner.bib) );
     }
-
+    }
     this.detailRunner = {};
     this.show_edit    = false;
     this.add_new      = false;
+    $rootScope.toggle('overlay1', 'off');
   };
 
   this.showEdit = function(runner) 
   {
     this.detailRunner 		 = runner;
-   // console.log(runner.date);
-   // this.detailRunner.date = new Date( runner.date  );
-    this.show_edit 				 = true;
+    this.show_edit 				   = true;
     $rootScope.toggle('overlay1', 'on');
   };
 
@@ -66,7 +135,7 @@ angular.module('tira.controllers', ['smart-table'])
   {
 		var ref = this.runnersRef.child(this.detailRunner.$id);
 		ref.remove(SyncFb.alert);
-    this.detailRunner = {};
+    $scope.detailRunner = {};
     this.show_edit    = false;
     this.add_new      = false; 
   };
@@ -85,22 +154,21 @@ angular.module('tira.controllers', ['smart-table'])
 
   this.add = function()
   {
-  	Races.$add(this.detailRace).then(SyncFb.alert);
+    console.log("add");
+    var timestamp = new Date(); 
+    this.detailRace.start_time = timestamp.toISOString();
+  	Races.$add(this.detailRace);//.then(SyncFb.alert);
   };
 
-  this.start = function(race) 
+  this.save = function(race) 
   {
-	  race.start_time = new Date( ).getTime();
-	  $scope.races.$save(race).then(SyncFb.alert);
+    console.log(race);
+	  $scope.races.$save(race);//.then(SyncFb.alert);
   };
-  this.stop = function(race) 
-  {
-	  race.start_time = null;
-	  $scope.races.$save(race).then(SyncFb.alert);
-  };
+
   this.remove = function(race) 
   {
-		$scope.races.$remove(race).then(SyncFb.alert);
+		$scope.races.$remove(race);//.then(SyncFb.alert);
   };
 })
 
@@ -121,13 +189,14 @@ angular.module('tira.controllers', ['smart-table'])
 	  var timestamp = new Date(); 
 	  this.finish 	= {time:timestamp.toISOString(), runner:false};
 	  var newFinish = this.finishersRef.push();
-	  newFinish.set(this.finish,SyncFb.alert);
+	  newFinish.set(this.finish);
 	  newFinish.setPriority(timestamp.getTime());
   };
 
   this.remove = function(notAssi)
   {
-    $scope.finishers.$remove(notAssi).then(SyncFb.alert);
+    console.log(notAssi);
+    $scope.finishers.$remove(notAssi);//.then(SyncFb.alert);
   };
 })
 
@@ -136,18 +205,12 @@ angular.module('tira.controllers', ['smart-table'])
 
 })
 
-.controller('RankingCtrl', function($scope, Runners,Firebase,Races,$filter) 
+.controller('RankingCtrl', function($scope, Runners,Firebase,Races,$filter,cats) 
 {
   $scope.races       = Races;
   $scope.runners     = Runners;
-  $scope.categories  = [
-			                    {mindate:new Date(1811,1,1), maxdate:new Date(1960,1,1),name:"senior", km:20} ,
-			                    {mindate:new Date(1811,1,1), maxdate:new Date(1960,1,1),name:"senior", km:10} ,
-			                    {mindate:new Date(1960,1,1), maxdate:new Date(1996,1,1),name:"adulte", km:20} ,
-			                    {mindate:new Date(1960,1,1), maxdate:new Date(1996,1,1),name:"adulte", km:10} ,
-			                    {mindate:new Date(1996,1,1), maxdate:new Date(2020,1,1),name:"jeune", km:20} ,
-			                    {mindate:new Date(1996,1,1), maxdate:new Date(2020,1,1),name:"jeune", km:10} 
-                				];
+  $scope.categories  = cats;
+                        console.log(cats);
 
   this.print = function()
   {
@@ -158,16 +221,19 @@ angular.module('tira.controllers', ['smart-table'])
 
     var content = [
         { text: 'Marchethon 2014', style: 'header' },
+
        // { text: [ 'Catégorie: KF2' ], color: 'black', italics: true },
        // { style: 'tableExample',table: { headerRows: 1,body: res_body} },      
         ]
 
     $scope.categories.forEach(function(cat) {
-        content.push({ text: [ 'Catégorie: '+cat.km+" km "+cat.name ], color: 'black', italics: true } );
+        content.push({ text: [ 'Catégorie: '+cat.km+" km "+cat.name+"\n" ], color: 'black', italics: true ,pageBreak: 'before'} );
+
+
         var res_body = [
-                [{ text: 'Rang', style: 'tableHeader' }, 
-                  { text: 'Nom,Prénom', style: 'tableHeader' }, 
-                  { text: 'Temps', style: 'tableHeader' }]    
+                [{ text: 'Rang', style: 'rank' }, 
+                  { text: 'Nom, Prénom', style: 'name' }, 
+                  { text: 'Temps', style: 'time' }]    
             ];
         var res = $filter('categoryFilter')($scope.runners, cat);
         res = $filter('orderBy')(res, 'time') ;
@@ -178,7 +244,7 @@ angular.module('tira.controllers', ['smart-table'])
           var time ;
           if (runner.time == undefined)
           {
-              time = "DNS";
+              time = "no time";
           }
           else
           {
@@ -186,7 +252,7 @@ angular.module('tira.controllers', ['smart-table'])
           }
 
         var runner_res = [{ text: rank.toString()       }, 
-                          { text: runner.lastName}, 
+                          { text: runner.lastName+" "+runner.firstName}, 
                           { text: time   }];
         res_body.push(runner_res);
         });
@@ -204,21 +270,44 @@ angular.module('tira.controllers', ['smart-table'])
 			bold: true,
 			margin: [0, 0, 0, 10]
 		},
+
+    logo: {
+      fontSize: 18,
+      bold: true,
+      margin: [0, 0, 0, 10],
+      alignment: 'right'
+    },
+
+
 		subheader: {
 			fontSize: 16,
 			bold: true,
 			margin: [0, 10, 0, 5]
 		},
 		tableExample: {
-			margin: [0, 5, 0, 15]
-		},
-		tableHeader: {
-			bold: true,
-			fontSize: 13,
-			color: 'black',
-			margin: [10, 10, 30, 10]
+			margin: [0, 5, 0, 5],
 
-		}
+		},
+
+    rank: {
+            bold: true,
+      fontSize: 13,
+      color: 'black',
+      margin: [10, 5, 10, 5],
+      alignment:'left'
+    },
+    name:{
+            bold: true,
+      fontSize: 13,
+      color: 'black',
+      margin: [60, 5, 60, 5]
+    },
+        time:{
+                bold: true,
+      fontSize: 13,
+      color: 'black',
+      margin: [10, 5, 30, 5]
+    },
 	},
 	defaultStyle: {
 		// alignment: 'justify'
@@ -229,7 +318,7 @@ angular.module('tira.controllers', ['smart-table'])
   }
 })
 
-.controller('ScanCtrl', function($scope,Finishers,Runners,Firebase,SyncFb) 
+.controller('ScanCtrl', function($scope,Finishers,Runners,Firebase,SyncFb,$filter) 
 {
   $scope.time = false; 
   $scope.finishers  = Finishers;
@@ -237,8 +326,29 @@ angular.module('tira.controllers', ['smart-table'])
   $scope.showDetail   = false;
   $scope.finishersRef      = new Firebase('run.firebaseio.com/finishers');
 
-
-
+  // $('#reader').html5_qrcode(
+  //   function(data)
+  //   {
+  //     $('#read').html(data);
+  //     $scope.bib = data;
+  //     console.log(data);
+  //     var notAssi = $filter('assignedFilter')($scope.finishers);
+  //     var last = $filter("orderBy")( notAssi , 'time')[0] ;
+      
+  //       $scope.Scan.assign(last);
+ 
+  //   },
+  //   function(error)
+  //   {
+  //     $('#read_error').html(error);
+  //     console.log(error);
+  //   }, 
+  //   function(videoError)
+  //   {
+  //     $('#vid_error').html(videoError);
+  //     console.log(videoError);
+  //   }
+  // );
 
   this.edit = function(finisher)
   {
@@ -247,88 +357,47 @@ angular.module('tira.controllers', ['smart-table'])
     $scope.finisher     = finisher;
   }
 
+
+  this.showList = function()
+  {
+    $scope.showList     = true;
+    $scope.showDetail   = false;
+    $scope.bib = {}
+  }
+
+  this.assignLast = function(){
+    var notAssi = $filter('assignedFilter')($scope.finishers);
+    var last = $filter("orderBy")( notAssi , 'time')[0] ;    
+    $scope.Scan.assign(last);
+  }
+
   this.assign = function(finisher)
   {
     $scope.finisher = finisher;
-    $scope.runner = false; 
+    $scope.runner   = false; 
     new Firebase("https://run.firebaseio.com/runners").startAt(Number($scope.bib) )
                                                       .endAt(Number($scope.bib) )
-                                                      .once('value', function(snap2) 
+                                                      .once('value', function(runnerSnaps) 
     {
-      snap2.forEach(function(runnerSnap) 
+      runnerSnaps.forEach(function(runnerSnap) 
       {
-
-        var obj = runnerSnap.val();
-        console.log('runner matching bib time', obj.time );
         $scope.runner = runnerSnap.val();
-        if (obj.time == ""  || obj.time == undefined  )
-        {
-          obj.time = $scope.finisher.time;
-          runnerSnap.ref().update(obj,SyncFb.alert);
-          //finisherSnap.ref().setPriority( -1,SyncFb.alert );
+        console.log('runner matching bib ', $scope.runner.bib );
+        //if (obj.time == ""  || obj.time == undefined  )
+       // {
+        $scope.runner.time = $scope.finisher.time;
+        runnerSnap.ref().update($scope.runner);
+        //finisherSnap.ref().setPriority( -1,SyncFb.alert );
 
-          var ref = $scope.finishersRef.child($scope.finisher.$id);
-          ref.setPriority(-1, SyncFb.alert );
+        var refFinisher = $scope.finishersRef.child($scope.finisher.$id);
+        refFinisher.setPriority(-1);
+        refFinisher.update({bib_runner:$scope.runner.bib} );
 
-  $scope.showDetail = false;
-  $scope.showList = true;
 
-        }
-        else 
-        {
-          SyncFb.alert(" a deja un temps attribue");
-        }
-                
+        $scope.showDetail = false;
+        $scope.showList   = true;
+        $scope.bib        ={};   
       });
     });
   };
-
-
-  this.scan = function()
-  {
-	  $scope.runner = false; 
-	  //console.log("scanning");
-	  new Firebase("https://run.firebaseio.com/finishers").startAt(0).limit(1).once('value', function(snap) 
-	  {
-	    snap.forEach(function(finisherSnap) 
-	    {
-	      console.log("finishers");
-	      $scope.time=finisherSnap.val().time; 
-	      //console.log($scope.bib);
-	      new Firebase("https://run.firebaseio.com/runners").startAt(Number($scope.bib) ).endAt(Number($scope.bib) ).once('value', function(snap2) 
-	      {
-	        console.log(snap2);
-					snap2.forEach(function(runnerSnap) 
-					{
-						//console.log("runner");
-						//console.log('runner matching bib', runnerSnap.val() );
-						//console.log('runner matching bib', $scope.bib   );
-						var obj = runnerSnap.val();
-            console.log('runner matching bib time', obj.time );
-
-	          $scope.runner = runnerSnap.val();
-	          if (obj.time == ""  || obj.time == undefined  )
-	          {
-              obj.time = $scope.time;
-              runnerSnap.ref().update(obj,SyncFb.alert);
-              finisherSnap.ref().setPriority( -1,SyncFb.alert );
-              console.log("AAAA");
-              //runnerSnap.ref().setPriority(Number($scope.bib));
-	          }
-	          else 
-	          {
-              //$scope.runner.comment = " a deja un temps attribue";
-              SyncFb.alert(" a deja un temps attribue");
-	          }
-	          
-          });
-        });
-      });
-    });
-		$scope.bib = "";
-  };
-})
-
-
-
-;
+});

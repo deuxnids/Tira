@@ -8,18 +8,54 @@
         <detail-finisher></detail-finisher> 
       </div>
 
+
+
       <div ng-show="showList">
-      <div class="list-group">  
+         
+
+      <!--  <div  class="center" id="reader" style="width:300px;height:250px;"></div> -->
+
+
+
+      <div class="list-group"> 
+
+<div  class="list-group-item">
+
+<form name="myForm" class="form-inline" role="form">
+
+  <div class="control-group">
+    <input
+    bs-form-control
+    type="number" 
+    required
+    ng-model="bib"
+    label="Dossard" 
+    label-class="col-xs-3 col-sm-3 col-lg-3" 
+    class="col-xs-3 col-sm-3 col-lg-3"
+    placeholder=""
+    autofocus
+    />
+
+    <button ng-click="Scan.assignLast()" class="btn btn-primary pull-right">Ajouter</button>
+  </div>
+</form> 
+
+</div>
+
+
         <a  ng-repeat="notAss in finishers | assignedFilter |  orderBy:'date' " 
             href="" 
             ng-click="Scan.edit(notAss)" 
             class="list-group-item">
+         <br> 
          <strong>{{$index + 1}}</strong> 
          heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}} <i class="fa fa-chevron-right pull-right"></i>
+                 <br> 
+
         </a>
       </div>
       </div>
-
     </div>
   </div>
 </div>
+

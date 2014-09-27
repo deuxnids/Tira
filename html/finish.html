@@ -1,29 +1,49 @@
-   <div content-for="title">
-    <span>Finish</span>
-  </div>
-
+<div content-for="title">
+  <span>Finish</span>
+</div>
 <div ng-controller="FinishCtrl as Finish">
 
+        <button ng-click="Finish.add()" 
+                class="btn btn-lg btn-success danger app-search"> 
+                FINISH  | {{finishers.length }} |
+        </button>
 
-<div class="scrollable">
-  <div class="scrollable-content">
-  <div class="container-fluid section section-break">
-		  <button ng-click="Finish.add()" class="btn btn-lg"> FINISH </button>
-	
-	</div>
+  <div class="scrollable">
+    <div class="scrollable-content">
+      <div class="list-group">
+        <div ng-repeat=
+              " notAss in finishers     
+              | assignedFilter 
+              | orderBy:'time':true 
+              "   
+              href="#" 
+              class="list-group-item">
+              <br>
 
-    <div class="list-group">
+          <strong ng-if="$index==0">
+             {{ $index+1}} |
+            heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}           
+          </strong>
+          <span ng-if="$index>0">
+            {{ $index+1}} |
+            heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}           
+          </span>
+<button type="button" 
+        class="btn btn-danger pull-right" 
+        ng-click="Finish.remove(notAss)">
+<span class="glyphicon glyphicon-trash">
+</span> Delete
+</button>
 
-			</div>
-			<div ng-repeat="notAss in finishers | assignedFilter |  orderBy:'date' "  href="#" class="list-group-item">
-        				heure de passage : {{  notAss.time | date:"hh:mm:ss:ms"}}
-				<button class="btn btn-danger pull-right"  ng-click="Finish.remove(notAss)"> DELETE</button> 
-				<br>
+
+<br>
+<br>
+
+
+        </div>
       </div>
-
     </div>
   </div>
-</div>
 </div>
 
 

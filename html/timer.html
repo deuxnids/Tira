@@ -1,59 +1,116 @@
 <div class="scrollable">
   <div class="scrollable-content">
-  <div class="container-fluid section section-break">
-
-<h1> Timer </h1>
-
-
-<h3> Courses </h3>
-<div ng-controller="TimerCtrl as Timer">
-
-
-<form name="myForm">
-    <div class="control-group">
-      <label>KM</label>
-      <input type="text" name="km" ng-model="Timer.detailRace.km" required>
-
-      <label>Start Time</label>
-      <input type="datetime" name="start_time" ng-model="Timer.detailRace.start_time">
-     <button ng-click="Timer.add()" class="btn btn">Ajouter</button>
+    <div content-for="title">
+      <span>Timer</span>
     </div>
-</form>
-
-<div class="row">
-  <div ng-repeat="race in races">  
-    <div class="col-md-2 jumbotron"> 
-      <p>{{race.km}} km </p>
-      <div ng-if="race.start_time!=null" class="animate-if">
-        <p> started at {{race.start_time |  date :'hh:mm:ss:.sss'}} </p>
-        <button ng-click="Timer.stop(race)"> STOP </button>
+    <div class="panel-group" id="accordion" >
+      <div class="panel panel-default" ng-controller="TimerCtrl as Timer">
+        <div class="panel-heading" toggle target="collapseOne">
+          <h4 class="panel-title"> Races </h4>
+        </div>
+        <div id="collapseOne" toggleable active-class="in" exclusion-group="accordion1" default="active" class="panel-collapse collapse">
+          <div class="panel-body">  
+            <form name="myForm" role="form">
+              <div class="control-group">
+                <input
+                bs-form-control
+                type="number" 
+                required
+                ng-model="Timer.detailRace.km"
+                label="km" 
+                label-class="col-xs-3 col-sm-3 col-lg-3" 
+                class="col-xs-8 col-sm-8 col-lg-8"
+                placeholder=""
+                />
+                <button type="button" class="btn btn-default">
+                <span ng-click="Timer.add()"> Ajouter</span>
+                </button>
+              </div>
+            </form> 
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>km</th>
+                    <th>start time</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr  ng-repeat="race in races">
+                    <td>
+                      <!-- editable username (text with validation) -->
+                      <span editable-text="race.km" e-name="km" e-form="rowform"  e-required>
+                        {{ race.km || 'empty' }}
+                      </span>
+                    </td>
+                    <td>
+                      <!-- editable username (text with validation) -->
+                      <span editable-text="race.start_time" e-name="start_time" e-form="rowform">
+                        {{ race.start_time || 'empty' }}
+                      </span>
+                    </td>
+                    <td style="white-space: nowrap">
+                      <!-- form -->
+                      <form editable-form name="rowform" onaftersave="Timer.save(race)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="false">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                          save
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                          cancel
+                        </button>
+                      </form>
+                      <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+                        <button class="btn btn-danger" ng-click="Timer.remove(race)">del</button>
+                      </div>  
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-      <div ng-if="race.start_time==null" class="animate-if">
-        <button ng-click="Timer.start(race)"> START </button>
+
+
+
+
+<div class="panel panel-default" ng-controller="FinishCtrl as Finish">
+        <div class="panel-heading" toggle target="collapseFinisher">
+          <h4 class="panel-title"> Finisher </h4>
+        </div>
+        <div id="collapseFinisher" toggleable active-class="in" exclusion-group="accordion1" class="panel-collapse collapse">
+          <div class="panel-body">  
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>finish time</th>
+                    <th>runner</th>
+                    <th> </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr  ng-repeat="finisher in finishers | orderBy:'priority'">
+                    <td>{{$index}}</td>
+                    <td> <a href="#" editable-text="finisher.time ">{{finisher.time | date :'hh:mm:ss:.sss'}} </a></td>
+                    <td> <a href="#" editable-text="finisher.runner ">{{finisher.bib_runner }} </a></td>
+                    <td> 
+                      <button type="button" ng-click="Finish.remove(finisher)" class="btn btn-default">
+                        <span class="glyphicon glyphicon-trash"></span> 
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
       </div>
-              <button ng-click="Timer.remove(race)"> DELETE </button>
-
-    </div>
-    <div class="col-md-1 "></div>
-  </div>
-</div>
-
-
-
-  <h3> Finishers </h3>
-
-{{nbreOfFinishers}}
-
-  <div class="row">
-    <div ng-repeat="finisher in finishers | orderBy:'priority'"> 
-      <p> {{finisher.time | date :'hh:mm:ss:.sss'}}    </p>
     </div>
   </div>
-
-
-</div>
-
-</div>
-</div>
 </div>
 

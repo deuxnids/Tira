@@ -2,7 +2,7 @@
 <div overlay="overlay1" >
   <div class="scrollable">
     <div class="scrollable-content">
-      <h4 class="overlay-title">Coureur</h4>
+      <h4 class="overlay-title">Coureurs</h4>
       <button   ng-click="Runner.destroy()"
                 ng-show="Runner.detailRunner.$id" class="btn btn-danger pull right">
                 Delete
@@ -13,69 +13,94 @@
           <input
           bs-form-control
           type="text" 
+          required
           ng-model="Runner.detailRunner.firstName"
           label="Prénom" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           placeholder=""
           />
           <input
           bs-form-control
           type="text" 
+          required
           ng-model="Runner.detailRunner.lastName"
           label="Nom de famille" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           placeholder=""
           />
+
+          <select
+          bs-form-control
+          type="text" 
+          ng-model="Runner.detailRunner.sex"
+          label="Sex" 
+          required
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
+          >
+          <option value="M">M</option>
+          <option value="F">F</option>
+          />
+
           <input
           bs-form-control
           type="email" 
+          required
           ng-model="Runner.detailRunner.email"
           label="email" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           placeholder=""
           />
           <input
           bs-form-control
           type="date" 
+          required
           ng-model="Runner.detailRunner.date"
           label="date de naissance" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           data-date-format="dd-mm-yyyy"
           data-date="12-02-2012" 
           />
           <input
           bs-form-control
           type="number" 
+          required
           ng-model="Runner.detailRunner.bib"
           label="dossard" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           placeholder=""
-          />
+          runnerid="Runner.detailRunner.$id" 
+          duplicate="runners"
+          />          
+          <span ng-show="myForm.$error.duplicate">Bib does already exist!</span>
+
           <input
           bs-form-control
+          required
           type="number" 
           ng-model="Runner.detailRunner.amount"
           label="montant" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           placeholder=""
           />
           <select
           bs-form-control
+          required
           type="number" 
           ng-model="Runner.detailRunner.km"
           label="km" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11">
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4">
           <option value="10">10</option>
           <option value="20">20</option>
          />
-        <div>
+        </div>
         <div bs-panel title="Chronométrage">
           <input
           ng-if="Runner.detailRunner.time"
@@ -83,16 +108,19 @@
           type="datetime" 
           ng-model="Runner.detailRunner.time"
           label="Heure d'arrivée" 
-          label-class="col-xs-3 col-sm-2 col-lg-1" 
-          class="col-xs-9 col-sm-10 col-lg-11"
+          label-class="col-xs-3 col-sm-3 col-lg-3" 
+          class="col-xs-4 col-sm-4 col-lg-4"
           placeholder=""
           />
         </div>
       </form>
-      <p toggle="off" bubble target="overlay1">
-        <button type="button" ng-click="Runner.save()" ng-disabled="myForm.$invalid" class="btn btn-primary">Save</button>
-        <span class="btn btn-default">Cancel</span>
-      </p>  
+        <button type        ="button" 
+                ng-click    ="Runner.save()" 
+                ng-disabled ="myForm.$invalid" 
+                class       ="btn btn-primary">
+                Save
+        </button>
+        <span toggle="off" target="overlay1" class="btn btn-default">Cancel</span>
     </div>      
   </div> 
 </div>

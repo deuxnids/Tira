@@ -25,5 +25,50 @@ angular.module('tira.factories', [])
 	}
 })
 
+
+.service('BibValidation', function() 
+{
+	this.validateBib = function( allRunners, runnerId, bib){
+				var valid = true;
+				allRunners.forEach(function(runner){
+					if (bib == runner.bib && runnerId != runner.$id  ) {
+						valid = false;
+           }
+				});
+				return valid;
+
+	}
+})
+
+.service('AuthService', ['$location' , function ($location) {
+	var AuthService = {};
+
+	AuthService.client =  new FirebaseSimpleLogin(myRef, function(error, user) 
+ 		{
+		  if (error) {
+		    console.log(error);
+		  } else if (user) {
+		  	AuthService.user = user;
+		    console.log("User ID: " + user.uid + ", Provider: " + user.provider);
+		  } else {
+		    console.log("not logged");
+		  }
+		});
+
+  AuthService.login = function (email, password) {
+		AuthService.client.login("password",{email:email, password:password}).when( $location.path('/check_in') );
+				    
+
+  };
+  AuthService.logout = function () {
+		AuthService.client.logout();
+		AuthService.user = null;
+		$location.path('/login');
+
+
+  };
+
+  return AuthService;
+}])
 ;
 

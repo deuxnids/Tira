@@ -1,43 +1,85 @@
-<div ng-controller="RunnerCtrl as Runner">
-  <div class="scrollable">
-    <div class="scrollable-content">
-      <div class="container-fluid section section-break" id="toggleExample">
-        <button ng-click="Runner.addNew()">
-          <i class="glyphicon glyphicon-plus"></i>
-        </button>
-        {{nbreOfRunners}}
-        <div class="table-responsive">
-          <table st-table="runners" class="table table-striped">
-            <thead>
-              <tr>
-                <th st-sort="lastName">Nom</th>
-                <th st-sort="km">km</th>
-                <th>Montant</th>
-                <th>dossard</th>
-                <th>Date de naissance</th>
-                <th>Temps</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="runner in runners">
-                <td>{{runner.lastName}}</td>
-                <td>{{runner.km}}</td>
-                <td>{{runner.amount | currency:"CHF " }}</td>   
-                <td>{{runner.bib}}</td>
-                <td>{{runner.date | date }} </td>
-                <td> <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }} </span> </td>
-                <td> <button ng-click="Runner.showEdit(runner)">
-                      <i class="glyphicon glyphicon-pencil"></i></button> </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <add-runner></add-runner> 
-  </div>
+<span> # de key pressed : {{count}} | </span>  
+<span> # de coureurs : {{nbreOfRunners}} | </span>  
+<span> montant total : {{totalAmount  | currency:"CHF "}} | </span>  
+
+
+
+
+<div class="col-xs-3 pull-right">
+  <input type="text" class="form-control"
+  ng-model="search" placeholder="Recherche">
 </div>
+
+
+<div class="dropdown pull-right" ng-show="AuthService.user.email=='admin@marchethon.ch'">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+    Manage data
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="Runner.importJson()">Import json</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="Runner.exportJson()">Export json</a></li>
+    <li role="presentation" class="divider"></li>
+    <li ng-if="Runner.show_doubloons==false" role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="Runner.show_doubloons=true">Filter doubloons bib</a></li>
+    <li ng-if="Runner.show_doubloons==true" role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="Runner.show_doubloons=false">Do not filter doubloons</a></li>
+    <li role="presentation" class="divider"></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="Runner.deleteAll()">Clear all</a></li>
+  </ul>
+  <span id="dowloadJson"></span>
+
+</div>
+
+<div class="pull-right"> 
+  <button ng-click="Runner.addNew()" class="btn btn-success">
+    <i class="glyphicon glyphicon-plus">Ajouter</i>
+  </button>
+</div>
+
+<br>
+<br>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Noms</th>
+        <th>km</th>
+        <th>Montant</th>
+        <th>dossard</th>
+        <th>Date de naissance</th>
+        <th>Temps</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-if="Runner.show_doubloons==false" ng-repeat="runner in runners | filter:search ">
+        <td>{{ runner.lastName | uppercase}}, {{runner.firstName}}</td>
+        <td>{{runner.km}}</td>
+        <td>{{runner.amount | currency:"CHF " }}</td>   
+        <td>{{runner.bib}}</td>
+        <td>{{runner.date | date }} </td>
+        <td> <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }} </span> </td>
+        <td> <button ng-click="Runner.showEdit(runner)" class="btn btn-primary">
+              <i class="glyphicon glyphicon-pencil"></i></button> </td>
+      </tr>
+
+
+      <tr ng-if="Runner.show_doubloons==true" ng-repeat="runner in runners | filter:search | doubloonsFilter:runners">
+        <td>{{ runner.lastName | uppercase}}, {{runner.firstName}}</td>
+        <td>{{runner.km}}</td>
+        <td>{{runner.amount | currency:"CHF " }}</td>   
+        <td>{{runner.bib}}</td>
+        <td>{{runner.date | date }} </td>
+        <td> <span ng-if="runner.time">{{  { time:runner.time , km:runner.km } | race_time }} </span> </td>
+        <td> <button ng-click="Runner.showEdit(runner)" class="btn btn-primary">
+              <i class="glyphicon glyphicon-pencil"></i></button> </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
 
 
 

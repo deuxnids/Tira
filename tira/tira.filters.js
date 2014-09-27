@@ -1,5 +1,25 @@
 angular.module('tira.filters', [])
 
+.filter ('bibFilter', function ()  
+{
+  return function (bib) 
+  {
+    var bib_exists = false;
+    var ref        = new Firebase("https://run.firebaseio.com/runners");
+    ref.once('value', function(snap) 
+    {
+      snap.forEach(function(raceSnap) 
+      {
+        if (bib == raceSnap.val().bib)
+        {
+          bib_exists = true;
+        } 
+      })
+    })
+    return bib_exists;
+  };
+})
+
 .filter('race_time', function() 
 {
   findRace = function(input) 
@@ -68,5 +88,43 @@ angular.module('tira.filters', [])
     return filtered;
   };
 })
+
+.filter('doubloonsFilter',['BibValidation' , function (BibValidation) 
+{
+  return function (items, cat) 
+  {
+    var filtered = [];
+    for (var i = 0; i < items.length; i++) 
+    {
+      var item = items[i];
+      date = new Date(item.date);
+      if (     !BibValidation.validateBib( items, item.$id, item.bib) ) 
+      {
+        filtered.push(item);
+      }
+    }
+    return filtered;
+  };
+}])
+
+.filter('catFilter', function () 
+{
+  return function (cats, runner) 
+  {
+    var cat = "undefined";
+    for (var i = 0; i < cats.length; i++) 
+    {
+      var item = cats[i];
+      date = new Date(item.date);
+      if (item.km == cat.km && date >= cat.mindate && date<cat.maxdate) 
+      {
+        cat = item;
+      }
+    }
+    return cat;
+  };
+})
+
+
 
 ;
